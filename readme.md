@@ -1,5 +1,6 @@
 # Are we there yet?
-Test the patience of your audience
+Test the patience of your audience.  
+Available [here](https://giladaya.github.io/are-we-there-yet/).
 
 ## How to use
 1. Load `main.html` in your browser. It will show a QR code with a URL
