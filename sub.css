@@ -4,7 +4,9 @@
 #loaderWrapper {
   text-align: center;
   font-size: 3em;
-  color: white;
+  position: fixed;
+  bottom: 0;
+  width: 90%;
 }
 .loader,
 .loader:before,

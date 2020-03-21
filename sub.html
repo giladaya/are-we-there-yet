@@ -63,12 +63,11 @@
 
       setTimeout(() => {
         document.getElementById("loaderWrapper").classList.remove("hide");
-      }, 1500);
+      }, 2500);
       setTimeout(() => {
         document.getElementById("header").classList.remove("hide");
-      }, 2000);
+      }, 3720);
       setTimeout(() => {
-        const style = "body {background: red;}";
         fetch("base.css")
           .then(res => res.text())
           .then(css => {
@@ -77,9 +76,11 @@
               `<style>${css}</style>`
             );
           });
-      }, 2500);
+      }, 6200);
       setTimeout(() => {
-        const style = "body {background: red;}";
+        document.getElementById("text").classList.remove("hide");
+      }, 7000);
+      setTimeout(() => {
         fetch("sub.css")
           .then(res => res.text())
           .then(css => {
@@ -88,10 +89,7 @@
               `<style>${css}</style>`
             );
           });
-      }, 5000);
-      setTimeout(() => {
-        document.getElementById("text").classList.remove("hide");
-      }, 4500);
+      }, 8800);
     </script>
   </body>
 </html>
