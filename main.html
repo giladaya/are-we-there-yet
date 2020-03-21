@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="base.css" />
     <style>
       #qrContainer {
-        text-align: center;
+        margin-top: 2em;
       }
       #qrContainer svg {
         max-height: 50vh;
@@ -69,15 +69,32 @@
         return histogram;
       }
 
-      function getAverageTime(users) {
+      function getStats(users) {
         const count = Object.keys(users).length;
         if (!count) {
-          return 0;
+          return {
+            total: 0,
+            active: 0,
+            average: 0
+          };
         }
-        const sum = Object.keys(users).reduce((acc, userId) => {
-          return acc + (users[userId].last - users[userId].start);
-        }, 0);
-        return sum / count;
+        const now = Date.now();
+
+        let sum = 0;
+        let active = 0;
+        Object.keys(users).forEach(userId => {
+          if (now - users[userId].last < 2500) {
+            active++;
+          } else {
+            sum += users[userId].last - users[userId].start;
+          }
+        });
+
+        return {
+          total: count,
+          active,
+          average: sum / count
+        };
       }
 
       function getSubUrl(channel) {
@@ -139,8 +156,9 @@
         console.log("stop");
         clearInterval(interval);
         console.log(getHistogram(users));
-        avg = Math.round(getAverageTime(users) / 1000);
-        $status.innerText = `Average stay: ${avg}s`;
+        const stats = getStats(users);
+        avg = Math.round(stats.average / 1000);
+        $status.innerText = `Total: ${stats.total} Active: ${stats.active} Average stay: ${avg}s`;
       });
     </script>
   </body>
