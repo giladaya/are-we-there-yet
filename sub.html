@@ -8,86 +8,37 @@
     <title>Performance Demo</title>
 
     <link rel="icon" href="images/favicon.png" />
-    <link rel="stylesheet" href="base.css" />
     <style>
-      body {
-        background-color: #444;
-      }
-      .loaderWrapper {
-        text-align: center;
-        padding-top: 30vh;
-        font-size: 3em;
-        color: white;
-      }
-      .loader,
-      .loader:before,
-      .loader:after {
-        border-radius: 50%;
-        width: 2.5em;
-        height: 2.5em;
-        -webkit-animation-fill-mode: both;
-        animation-fill-mode: both;
-        -webkit-animation: load7 1.8s infinite ease-in-out;
-        animation: load7 1.8s infinite ease-in-out;
-      }
-      .loader {
-        display: inline-block;
-        color: #ffffff;
-        font-size: 10px;
-        /* margin: 80px auto; */
-        position: relative;
-        text-indent: -9999em;
-        -webkit-transform: translateZ(0);
-        -ms-transform: translateZ(0);
-        transform: translateZ(0) translate(-2.5em, -2.5em);
-        -webkit-animation-delay: -0.16s;
-        animation-delay: -0.16s;
-      }
-      .loader:before,
-      .loader:after {
-        content: "";
-        position: absolute;
-        top: 0;
-      }
-      .loader:before {
-        left: -3.5em;
-        -webkit-animation-delay: -0.32s;
-        animation-delay: -0.32s;
-      }
-      .loader:after {
-        left: 3.5em;
-      }
-      @-webkit-keyframes load7 {
-        0%,
-        80%,
-        100% {
-          box-shadow: 0 2.5em 0 -1.3em;
-        }
-        40% {
-          box-shadow: 0 2.5em 0 0;
-        }
-      }
-      @keyframes load7 {
-        0%,
-        80%,
-        100% {
-          box-shadow: 0 2.5em 0 -1.3em;
-        }
-        40% {
-          box-shadow: 0 2.5em 0 0;
-        }
+      .hide {
+        display: none;
       }
     </style>
   </head>
 
   <body>
-    <div class="loaderWrapper">
-      Loading...<br />
+    <h1 class="hide" id="header">Performance Demo</h1>
+    <p class="column hide" id="text">
+      In work place, performance or job performance means good ranking with the
+      hypothesized conception of requirements of a role. There are two types of
+      job performances: contextual and task. Task performance is related to
+      cognitive ability while contextual performance is dependent upon
+      personality.[2] Task performance are behavioral roles that are recognized
+      in job descriptions and by remuneration systems, they are directly related
+      to organizational performance, whereas, contextual performance are value
+      based and additional behavioral roles that are not recognized in job
+      descriptions and covered by compensation; they are extra roles that are
+      indirectly related to organizational performance.[3] Citizenship
+      performance like contextual performance means a set of individual
+      activity/contribution (prosocial organizational behavior) that supports
+      the organizational culture.[4][5]
+    </p>
+    <div id="loaderWrapper" class="hide">
       <div class="loader">Loading...</div>
     </div>
     <script src="./constants.js"></script>
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
     <script>
+      // init pubnub
       const channel = location.search.split("=")[1];
       const uuid = PubNub.generateUUID();
       const pubnub = new PubNub({
@@ -107,6 +58,40 @@
           }
         );
       }, 1000);
+
+      // simulate slow loading of page
+
+      setTimeout(() => {
+        document.getElementById("loaderWrapper").classList.remove("hide");
+      }, 1500);
+      setTimeout(() => {
+        document.getElementById("header").classList.remove("hide");
+      }, 2000);
+      setTimeout(() => {
+        const style = "body {background: red;}";
+        fetch("base.css")
+          .then(res => res.text())
+          .then(css => {
+            document.head.insertAdjacentHTML(
+              "beforeend",
+              `<style>${css}</style>`
+            );
+          });
+      }, 2500);
+      setTimeout(() => {
+        const style = "body {background: red;}";
+        fetch("sub.css")
+          .then(res => res.text())
+          .then(css => {
+            document.head.insertAdjacentHTML(
+              "beforeend",
+              `<style>${css}</style>`
+            );
+          });
+      }, 5000);
+      setTimeout(() => {
+        document.getElementById("text").classList.remove("hide");
+      }, 4500);
     </script>
   </body>
 </html>
