@@ -1,0 +1,15 @@
+{
+  "name": "patience-tester",
+  "version": "1.0.0",
+  "description": "Test the patience of your audience",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -p 8082",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "http-server": "^0.12.1"
+  }
+}

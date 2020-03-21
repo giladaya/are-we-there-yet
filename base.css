@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+}
+html {
+  height: 100vh;
+}
+body {
+  height: 100%;
+  font-family: sans-serif;
+  padding: 1em;
+}

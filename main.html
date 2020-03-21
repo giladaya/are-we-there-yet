@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title></title>
+
+    <link rel="stylesheet" href="base.css" />
+    <style>
+      #qrContainer > img {
+        width: 100%;
+        height: auto;
+      }
+      #status {
+        margin-left: 1em;
+      }
+    </style>
+    <link rel="icon" href="images/favicon.png" />
+  </head>
+
+  <body>
+    <h1>Demo</h1>
+    <button id="btnStop">Stop</button>
+    <span id="status">0</span>
+    <div id="qrContainer"></div>
+
+    <script src="./constants.js"></script>
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script src="./qrcode_SJIS.js"></script>
+    <script>
+      function create_qrcode(text, typeNumber, errorCorrectionLevel, mode, mb) {
+        qrcode.stringToBytes = qrcode.stringToBytesFuncs[mb];
+
+        var qr = qrcode(typeNumber || 4, errorCorrectionLevel || "M");
+        qr.addData(text, mode);
+        qr.make();
+
+        //  return qr.createTableTag();
+        return qr.createSvgTag(10);
+        // return qr.createImgTag(10);
+      }
+
+      function getActiveCount(users) {
+        const now = Date.now();
+        const active = Object.keys(users).reduce((count, userId) => {
+          if (now - users[userId].last < 5000) {
+            return count + 1;
+          }
+          return count;
+        }, 0);
+        return active;
+      }
+
+      function getHistogram(users) {
+        const times = Object.keys(users).map(userId => {
+          return (users[userId].last - users[userId].start) / 1000;
+        });
+        const max = times.length ? Math.ceil(Math.max(...times)) : 1;
+        const histogram = times.reduce((hist, time) => {
+          hist[Math.floor(time)]++;
+          return hist;
+        }, new Array(max).fill(0));
+        return histogram;
+      }
+
+      function getAverageTime(users) {
+        const count = Object.keys(users).length;
+        if (!count) {
+          return 0;
+        }
+        const sum = Object.keys(users).reduce((acc, userId) => {
+          return acc + (users[userId].last - users[userId].start);
+        }, 0);
+        return sum / count;
+      }
+
+      const channel = "patience_" + Math.round(Math.random() * 10000);
+      console.log("Channel", channel);
+      const users = {};
+
+      // init qr
+      const subUrl = location.origin + "/sub.html?channel=" + channel;
+      // const subUrl = "http://foo.com/sub.html?channel=" + channel;
+      // console.log(subUrl);
+      // console.log(create_qrcode(subUrl, '0', "Q", "Byte", "SJIS"));
+      const $qrContainer = document.getElementById("qrContainer");
+      $qrContainer.innerHTML = `<a href="${subUrl}" target="_blank">${create_qrcode(
+        subUrl,
+        "0",
+        "Q",
+        "Byte",
+        "SJIS"
+      )}</a>`;
+
+      // init pubnub
+      const uuid = PubNub.generateUUID();
+      const pubnub = new PubNub({
+        publishKey: window._pubKey,
+        subscribeKey: window._subKey,
+        uuid: uuid
+      });
+
+      pubnub.subscribe({
+        channels: [channel]
+      });
+
+      pubnub.addListener({
+        message: function(event) {
+          const userId = event.message.sender;
+          if (!(userId in users)) {
+            users[userId] = { start: Date.now(), last: Date.now() };
+          } else {
+            users[userId].last = Date.now();
+          }
+        }
+      });
+
+      // update status
+      const $status = document.getElementById("status");
+      // log status every second
+      const interval = setInterval(() => {
+        // console.log(getHistogram(users));
+        // getHistogram(users);
+        $status.innerText = getActiveCount(users);
+      }, 1000);
+
+      // handle stop
+      const $button = document.getElementById("btnStop");
+
+      $button.addEventListener("click", () => {
+        console.log("stop");
+        clearInterval(interval);
+        console.log(getHistogram(users));
+        avg = Math.round(getAverageTime(users) / 1000);
+        $status.innerText = `Average stay: ${avg}s`;
+      });
+    </script>
+  </body>
+</html>
