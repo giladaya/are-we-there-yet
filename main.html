@@ -9,6 +9,9 @@
 
     <link rel="stylesheet" href="base.css" />
     <style>
+      #qrContainer {
+        text-align: center;
+      }
       #qrContainer > img {
         width: 100%;
         height: auto;
@@ -78,22 +81,14 @@
       }
 
       const channel = "patience_" + Math.round(Math.random() * 10000);
-      console.log("Channel", channel);
       const users = {};
 
       // init qr
       const subUrl = location.origin + "/sub.html?channel=" + channel;
-      // const subUrl = "http://foo.com/sub.html?channel=" + channel;
-      // console.log(subUrl);
-      // console.log(create_qrcode(subUrl, '0', "Q", "Byte", "SJIS"));
+      const qrImgTag = create_qrcode(subUrl, "0", "Q", "Byte", "SJIS");
       const $qrContainer = document.getElementById("qrContainer");
-      $qrContainer.innerHTML = `<a href="${subUrl}" target="_blank">${create_qrcode(
-        subUrl,
-        "0",
-        "Q",
-        "Byte",
-        "SJIS"
-      )}</a>`;
+      $qrContainer.innerHTML = `<a href="${subUrl}" target="_blank">${qrImgTag}<br/>
+        ${subUrl}</a>`;
 
       // init pubnub
       const uuid = PubNub.generateUUID();
@@ -123,7 +118,6 @@
       // log status every second
       const interval = setInterval(() => {
         // console.log(getHistogram(users));
-        // getHistogram(users);
         $status.innerText = getActiveCount(users);
       }, 1000);
 
