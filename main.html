@@ -80,11 +80,22 @@
         return sum / count;
       }
 
+      function getSubUrl(channel) {
+        return (
+          location.href
+            .split("/")
+            .slice(0, -1)
+            .join("/") +
+          "/sub.html?channel=" +
+          channel
+        );
+      }
+
       const channel = "patience_" + Math.round(Math.random() * 10000);
       const users = {};
 
       // init qr
-      const subUrl = location.origin + "/sub.html?channel=" + channel;
+      const subUrl = getSubUrl(channel);
       const qrImgTag = create_qrcode(subUrl, "0", "Q", "Byte", "SJIS");
       const $qrContainer = document.getElementById("qrContainer");
       $qrContainer.innerHTML = `<a href="${subUrl}" target="_blank">${qrImgTag}<br/>
